@@ -2,35 +2,36 @@ import React from 'react';
 
 class App extends React.Component {
   state = {
-    availableScheduleItems: {
-      block1: {
+    availableScheduleItems: [
+      {
         name: 'Swift',
       },
-      block2: {
+      {
         name: 'ATMS',
       },
-      block3: {
+      {
         name: 'EBS',
       },
-      block4: {
+      {
         name: 'iHomeFitness',
       },
-      block5: {
+      {
         name: 'POCUS',
       },
-      block6: {
+      {
         name: 'Hoolima',
       },
-      block7: {
+      {
         name: 'ORA',
       },
-      block8: {
+      {
         name: 'WinRyde',
       },
-      block9: {
+      {
         name: 'LocationTracker',
       },
-    },
+    ],
+
     todaysSchedule: {
       availableItem1: {
         timeStart: '0900',
@@ -82,9 +83,12 @@ class App extends React.Component {
   _drag = (event) => {
     const { availableScheduleItems } = this.state;
 
+    // this targetId has a number... let's grab it
+    const targetId = parseInt(event.target.id.match(/\d/), 10);
+
     // serialize first
     // send to dataTransfer API what i am dragging
-    const objectSerialized = JSON.stringify(availableScheduleItems[event.target.id]);
+    const objectSerialized = JSON.stringify(availableScheduleItems[targetId]);
     event.dataTransfer.setData('scheduleItem', objectSerialized);
   }
 
@@ -125,15 +129,22 @@ class App extends React.Component {
   }
 
   _renderSchedulableItems = (items) => {
-    return Object.keys(items).map((item, index) => {
-      const schedulableItem = items[item];
-
+    return items.map((schedulableItem, index) => {
       return (
         <div
-          style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', margin: 8, backgroundColor: '#00ef00', height: 44, width: 200 }}
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: 8,
+            backgroundColor: '#00ef00',
+            height: 44,
+            width: 200
+          }}
           draggable={true}
           key={schedulableItem.name}
-          id={`block${index + 1}`}
+          id={`block${index}`}
           onDragStart={this._drag}
         >{ schedulableItem.name }</div>
       )
