@@ -33,19 +33,19 @@ class App extends React.Component {
     ],
 
     todaysSchedule: {
-      availableItem1: {
+      availableItem0: {
         timeStart: '0900',
         timeEnd: '1100',
       },
-      availableItem2: {
+      availableItem1: {
         timeStart: '1100',
         timeEnd: '1300',
       },
-      availableItem3: {
+      availableItem2: {
         timeStart: '1300',
         timeEnd: '1500',
       },
-      availableItem4: {
+      availableItem3: {
         timeStart: '1500',
         timeEnd: '1700',
       },
@@ -78,6 +78,26 @@ class App extends React.Component {
     });
 
     return isDuplicate;
+  }
+
+  _deleteScheduledItem = (itemName) => {
+    const { todaysSchedule } = this.state;
+
+    Object.keys(todaysSchedule).forEach((key) => {
+      const todaysScheduleItem = todaysSchedule[key];
+
+      if (todaysScheduleItem.name === itemName) {
+        this.setState({
+          todaysSchedule: {
+            ...this.state.todaysSchedule,
+            [key]: {
+              ...todaysScheduleItem,
+              name: undefined,
+            }
+          }
+        });
+      }
+    });
   }
 
   _drag = (event) => {
@@ -151,11 +171,21 @@ class App extends React.Component {
     });
   }
 
+  _renderTodaysScheduleCode = (schedule) => {
+    // assuming schedule is an object
+    return (
+      <div style={{ backgroundColor: '#dfdfdf', padding: 8, width: 250 }}>
+        <pre>
+          { JSON.stringify(schedule, null, ' ') }
+        </pre>
+      </div>
+    )
+  }
+
   _renderTodaysSchedule = (schedule, hoveredElement) => {
     return Object.keys(schedule).map((item, index) => {
-      const destinationItem = `availableItem${index + 1}`;
+      const destinationItem = `availableItem${index}`;
       const scheduledItem = schedule[item];
-      console.log('schedule', schedule);
 
       const calculatedStyle = {
         color: '#000',
@@ -184,18 +214,61 @@ class App extends React.Component {
       }
 
       return (
-        <div
-          style={calculatedStyle}
-          id={`availableItem${index + 1}`}
-          onDrop={this._drop}
-          key={item.name || index}
-          onDragOver={this._allowDrop}
-          onDragLeave={this._dragExit}
-        >
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <span
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 44,
+              width: 44,
+              backgroundColor: '#fff',
+              border: '1px solid #000',
+              fontSize: 8,
+              color: '#000',
+              textAlign: 'center',
+            }}
+          >
+            { scheduledItem.timeStart }
+            <br />
+            &mdash;<br />
+            { scheduledItem.timeEnd }
+          </span>
+          <div
+            style={calculatedStyle}
+            id={`availableItem${index}`}
+            onDrop={this._drop}
+            key={item.name || index}
+            onDragOver={this._allowDrop}
+            onDragLeave={this._dragExit}
+          >
+            {
+              scheduledItem.name || 'Available'
+            }
+          </div>
+
           {
-            scheduledItem.name || 'Available'
+            scheduledItem.name
+            ?
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 44,
+                width: 44,
+                backgroundColor: '#fff',
+                border: '1px solid #000',
+                fontSize: 16,
+                color: '#000',
+                textAlign: 'center',
+                cursor: 'pointer',
+              }}
+              onClick={() => { this._deleteScheduledItem(scheduledItem.name) }}
+            >X</span>
+            : null
           }
-      </div>
+        </div>
       );
     })
   }
@@ -220,9 +293,15 @@ class App extends React.Component {
           { this._renderSchedulableItems(availableScheduleItems) }
         </div>
 
-        <h2>Todays Schedule</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }}>
-          { this._renderTodaysSchedule(todaysSchedule, currentHoverElement) }
+        <h2>Today's Schedule</h2>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }}>
+            { this._renderTodaysSchedule(todaysSchedule, currentHoverElement) }
+          </div>
+
+          <div>
+            { this._renderTodaysScheduleCode(todaysSchedule)}
+          </div>
         </div>
       </div>
     );
