@@ -1,37 +1,38 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
+const SCHEDULE_ITEMS = [
+  {
+    name: 'Swift',
+  },
+  {
+    name: 'ATMS',
+  },
+  {
+    name: 'EBS',
+  },
+  {
+    name: 'iHomeFitness',
+  },
+  {
+    name: 'POCUS',
+  },
+  {
+    name: 'Hoolima',
+  },
+  {
+    name: 'ORA',
+  },
+  {
+    name: 'WinRyde',
+  },
+  {
+    name: 'LocationTracker',
+  },
+];
 
 class App extends React.Component {
   state = {
-    availableScheduleItems: [
-      {
-        name: 'Swift',
-      },
-      {
-        name: 'ATMS',
-      },
-      {
-        name: 'EBS',
-      },
-      {
-        name: 'iHomeFitness',
-      },
-      {
-        name: 'POCUS',
-      },
-      {
-        name: 'Hoolima',
-      },
-      {
-        name: 'ORA',
-      },
-      {
-        name: 'WinRyde',
-      },
-      {
-        name: 'LocationTracker',
-      },
-    ],
-
     todaysSchedule: {
       availableItem0: {
         timeStart: '0900',
@@ -101,7 +102,7 @@ class App extends React.Component {
   }
 
   _drag = (event) => {
-    const { availableScheduleItems } = this.state;
+    const { availableScheduleItems } = this.props;
 
     // this targetId has a number... let's grab it
     const targetId = parseInt(event.target.id.match(/\d/), 10);
@@ -275,10 +276,12 @@ class App extends React.Component {
 
   render() {
     const {
-      availableScheduleItems,
       todaysSchedule,
       currentHoverElement,
     } = this.state;
+    const {
+      availableScheduleItems,
+    } = this.props;
 
     return (
       <div className="App">
@@ -307,5 +310,13 @@ class App extends React.Component {
     );
   }
 }
+
+App.propTypes = {
+  availableScheduleItems: PropTypes.array,
+};
+
+App.defaultProps = {
+  availableScheduleItems: SCHEDULE_ITEMS,
+};
 
 export default App;
